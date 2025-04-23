@@ -1,4 +1,4 @@
-'use client';  // This directive marks this as a Client Component
+'use client';  
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -12,7 +12,7 @@ export default function LandingPage() {
   const [currentLocation, setCurrentLocation] = useState(0);
   const [rememberMe, setRememberMe] = useState(false);
   
-  // Indian travel destinations
+ 
   const locations = [
     'Taj Mahal',
     'Varanasi',
@@ -21,7 +21,7 @@ export default function LandingPage() {
     'Himalaya'
   ];
   
-  // Rotate backgrounds every 6 seconds
+ 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentLocation((prev) => (prev + 1) % locations.length);
@@ -29,7 +29,7 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Modal toggle functions
+  
   const toggleLogin = () => {
     setShowLogin(!showLogin);
     if (showSignup) setShowSignup(false);
@@ -48,25 +48,25 @@ export default function LandingPage() {
     if (showSignup) setShowSignup(false);
   };
 
-  // Handle login form submission
+
   const handleLogin = (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault(); 
     console.log("Navigating to home page after login");
     router.push('/home');
   };
 
-  // Handle signup form submission
+
   const handleSignup = (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault(); 
     console.log("Navigating to home page after signup");
     router.push('/home');
   };
 
-  // Handle forgot password form submission
+  
   const handleForgotPassword = (e) => {
-    e.preventDefault(); // Prevent the default form submission
+    e.preventDefault();
     console.log("Password reset link sent");
-    // In a real app, you might keep the user on this page or show a confirmation
+   
   };
 
   return (

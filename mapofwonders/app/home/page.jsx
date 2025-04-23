@@ -17,7 +17,7 @@ export default function HomePage() {
     offset: ["start start", "end end"]
   });
   
-  // Color themes for each location
+  
   const locationThemes = [
     { primary: '#FF6B6B', secondary: '#4ECDC4', accent: '#FFE66D', hue: 0 },     // Taj Mahal
     { primary: '#FF9F1C', secondary: '#A42CD6', accent: '#F9C846', hue: 60 },    // Varanasi
@@ -26,7 +26,7 @@ export default function HomePage() {
     { primary: '#5603AD', secondary: '#8367C7', accent: '#C2CAE8', hue: 240 }    // Himalaya
   ];
   
-  // Indian travel destinations
+  
   const locations = [
     'Taj Mahal',
     'Varanasi',
@@ -35,7 +35,7 @@ export default function HomePage() {
     'Himalaya'
   ];
   
-  // Destination descriptions
+  
   const descriptions = [
     'Symbol of eternal love in Agra',
     'Spiritual heart of India on the Ganges',
@@ -44,28 +44,28 @@ export default function HomePage() {
     'Majestic mountains touching the sky'
   ];
 
-  // Recent bookings data
+ 
   const recentBookings = [
     { id: 1, destination: 'Jaipur', date: 'May 15, 2025', status: 'Confirmed', price: '₹24,500' },
     { id: 2, destination: 'Kerala', date: 'July 3, 2025', status: 'Pending', price: '₹18,900' },
     { id: 3, destination: 'Taj Mahal', date: 'June 12, 2025', status: 'Confirmed', price: '₹12,350' },
   ];
 
-  // Recommended destinations
+  
   const recommendations = [
     { name: 'Goa', rating: 4.8, category: 'Beaches', price: '₹15,000', duration: '5 days' },
     { name: 'Udaipur', rating: 4.9, category: 'Palace', price: '₹22,500', duration: '4 days' },
     { name: 'Darjeeling', rating: 4.7, category: 'Mountains', price: '₹19,800', duration: '6 days' }
   ];
 
-  // Special offers
+ 
   const specialOffers = [
     { title: 'Golden Triangle Tour', discount: '15% OFF', validUntil: 'May 30' },
     { title: 'Kerala Backwaters', discount: '₹5,000 OFF', validUntil: 'June 15' },
     { title: 'Himalayan Adventure', discount: 'FREE Hotel Upgrade', validUntil: 'Limited Time' },
   ];
 
-  // Trip stats
+ 
   const tripStats = {
     visited: 3,
     upcoming: 2,
@@ -73,7 +73,7 @@ export default function HomePage() {
     reviews: 8
   };
 
-  // Handle initial loading
+  
   useEffect(() => {
     setIsMounted(true);
     setTimeout(() => {
@@ -81,7 +81,7 @@ export default function HomePage() {
     }, 1500);
   }, []);
 
-  // Animation for orb when location changes
+  
   useEffect(() => {
     orbControls.start({
       scale: [1, 1.2, 1],
@@ -90,7 +90,7 @@ export default function HomePage() {
     });
   }, [currentLocation, orbControls]);
   
-  // Auto-rotate locations every 8 seconds
+ 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentLocation((prev) => (prev + 1) % locations.length);
@@ -98,7 +98,7 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Generate floating particles
+ 
   const renderParticles = () => {
     if (!isMounted) return null;
     
@@ -132,7 +132,7 @@ export default function HomePage() {
     ));
   };
 
-  // Navigation options
+ 
   const navOptions = [
     { id: 'discover', label: 'Discover', icon: 'compass' },
     { id: 'bookings', label: 'Bookings', icon: 'calendar' },
