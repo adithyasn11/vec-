@@ -1,9 +1,12 @@
 // app/layout.jsx
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Splash from '../components/splash'; // Correct import
+import Splash from '../components/splash'; 
 import Header from '../components/header';
 import Footer from '../components/footer';
+
+
+
 // Initialize the Inter font with Latin subset
 const inter = Inter({
   subsets: ['latin'],
@@ -20,7 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans bg-gray-900 text-gray-100`}>
-        <Splash /> {/* Properly using the Splash component */}
+        <Splash />
         <Header />
         <main>{children}</main>
         <Footer />

@@ -2,21 +2,22 @@
 import { useEffect, useRef } from 'react';
 
 function SplashCursor({
-  // You can customize these props if you want
-  SIM_RESOLUTION = 72,
+  // Modified parameters for a more faded, subtle effect
+  SIM_RESOLUTION = 64,                // Reduced from 72
   DYE_RESOLUTION = 720,
   CAPTURE_RESOLUTION = 512,
-  DENSITY_DISSIPATION = 3.5,
-  VELOCITY_DISSIPATION = 2,
-  PRESSURE = 0.1,
+  DENSITY_DISSIPATION = 6.5,          // Increased from 3.5 - makes the effect fade faster
+  VELOCITY_DISSIPATION = 4,           // Increased from 2 - reduces how far the fluid travels
+  PRESSURE = 0.08,                    // Reduced from 0.1 - less pressure means gentler movement
   PRESSURE_ITERATIONS = 20,
-  CURL = 3,
-  SPLAT_RADIUS = 0.2,
-  SPLAT_FORCE = 4000,
+  CURL = 1.5,                         // Reduced from 3 - creates less swirling
+  SPLAT_RADIUS = 0.15,                // Reduced from 0.2 - smaller splashes
+  SPLAT_FORCE = 2000,                 // Reduced from 4000 - gentler force when creating splashes
   SHADING = true,
-  COLOR_UPDATE_SPEED = 100000090,
+  COLOR_UPDATE_SPEED = 9000,          // Reduced - slower color transitions
   BACK_COLOR = { r: 0.5, g: 0, b: 0 },
-  TRANSPARENT = true
+  TRANSPARENT = true,
+  OPACITY = 0.6                       // Added new parameter for overall opacity
 }) {
   const canvasRef = useRef(null);
 
