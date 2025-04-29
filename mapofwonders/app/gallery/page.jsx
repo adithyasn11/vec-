@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Orb from '../../components/Orb.jsx';
+import Image from 'next/image';
 
 export default function GalleryPage() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -40,7 +41,8 @@ export default function GalleryPage() {
       location: 'Agra, Uttar Pradesh',
       category: 'heritage',
       photographer: 'Amit Sharma',
-      featured: true
+      featured: true,
+      image: '/gallery/taj-sunrise.jpg'
     },
     {
       id: 2,
@@ -48,7 +50,8 @@ export default function GalleryPage() {
       description: 'Rolling hills and lush valleys of the Western Ghats mountain range',
       location: 'Kerala',
       category: 'nature',
-      photographer: 'Priya Mehta'
+      photographer: 'Priya Mehta',
+      image: '/gallery/western-ghats.jpg'
     },
     {
       id: 3,
@@ -57,7 +60,8 @@ export default function GalleryPage() {
       location: 'Mathura, Uttar Pradesh',
       category: 'culture',
       photographer: 'Rahul Patel',
-      featured: true
+      featured: true,
+      image: '/gallery/holi-festival.jpg'
     },
     {
       id: 4,
@@ -65,7 +69,8 @@ export default function GalleryPage() {
       description: 'Sacred rituals along the banks of the Ganges River',
       location: 'Varanasi, Uttar Pradesh',
       category: 'culture',
-      photographer: 'Sarah Williams'
+      photographer: 'Sarah Williams',
+      image: '/gallery/varanasi-ghats.jpg'
     },
     {
       id: 5,
@@ -73,7 +78,8 @@ export default function GalleryPage() {
       description: 'A majestic Bengal tiger in its natural habitat',
       location: 'Bandhavgarh National Park, Madhya Pradesh',
       category: 'wildlife',
-      photographer: 'Michael Johnson'
+      photographer: 'Michael Johnson',
+      image: '/gallery/bengal-tiger.jpg'
     },
     {
       id: 6,
@@ -82,7 +88,8 @@ export default function GalleryPage() {
       location: 'Mumbai, Maharashtra',
       category: 'aerial',
       photographer: 'Ravi Kumar',
-      featured: true
+      featured: true,
+      image: '/gallery/mumbai-skyline.jpg'
     },
     {
       id: 7,
@@ -90,7 +97,8 @@ export default function GalleryPage() {
       description: 'Serene canals and houseboats in the Kerala backwaters',
       location: 'Alleppey, Kerala',
       category: 'nature',
-      photographer: 'Lakshmi Nair'
+      photographer: 'Lakshmi Nair',
+      image: '/gallery/kerala-backwaters.jpg'
     },
     {
       id: 8,
@@ -98,7 +106,8 @@ export default function GalleryPage() {
       description: 'UNESCO World Heritage ruins of the Vijayanagara Empire',
       location: 'Hampi, Karnataka',
       category: 'heritage',
-      photographer: 'Thomas Anderson'
+      photographer: 'Thomas Anderson',
+      image: '/gallery/hampi-temples.jpg'
     },
     {
       id: 9,
@@ -107,7 +116,8 @@ export default function GalleryPage() {
       location: 'Uttarakhand',
       category: 'nature',
       photographer: 'Vikram Singh',
-      featured: true
+      featured: true,
+      image: '/gallery/himalayan-peaks.jpg'
     },
     {
       id: 10,
@@ -115,7 +125,8 @@ export default function GalleryPage() {
       description: 'Performer in the classical Kathakali dance form',
       location: 'Kochi, Kerala',
       category: 'culture',
-      photographer: 'Meera Krishnan'
+      photographer: 'Meera Krishnan',
+      image: '/gallery/kathakali-dancer.jpg'
     },
     {
       id: 11,
@@ -123,7 +134,8 @@ export default function GalleryPage() {
       description: 'Golden sand dunes of the Thar Desert',
       location: 'Jaisalmer, Rajasthan',
       category: 'nature',
-      photographer: 'David Miller'
+      photographer: 'David Miller',
+      image: '/gallery/thar-desert.jpg'
     },
     {
       id: 12,
@@ -131,7 +143,8 @@ export default function GalleryPage() {
       description: 'Bird\'s eye view of New Delhi\'s urban landscape',
       location: 'New Delhi',
       category: 'aerial',
-      photographer: 'Arjun Kapoor'
+      photographer: 'Arjun Kapoor',
+      image: '/gallery/delhi-aerial.jpg'
     }
   ];
 
@@ -348,13 +361,15 @@ export default function GalleryPage() {
                   onClick={() => openImageModal(image)}
                   className="relative h-64 rounded-xl overflow-hidden cursor-pointer group"
                 >
-                  {/* Using a placeholder for demo */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-indigo-600/30 group-hover:from-purple-600/50 group-hover:to-indigo-600/50 transition-all duration-500"></div>
-                  
-                  {/* Image placeholder */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-gray-700 to-gray-800"></div>
-                  
-                  {/* Content overlay */}
+                  <Image
+                    src={image.image}
+                    alt={image.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw"
+                    className="object-cover transform transition-transform duration-500 group-hover:scale-105"
+                    quality={100}
+                    priority={true}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
                   <div className="absolute inset-0 flex flex-col justify-end p-5">
                     <h3 className="text-xl font-bold text-white mb-1">{image.title}</h3>
@@ -398,14 +413,17 @@ export default function GalleryPage() {
                   onClick={() => openImageModal(image)}
                   className="group relative h-48 rounded-lg overflow-hidden cursor-pointer"
                 >
-                  {/* Image placeholder */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800"></div>
-                  
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600/0 to-indigo-600/0 group-hover:from-purple-600/40 group-hover:to-indigo-600/40 transition-all duration-300"></div>
-                  
-                  {/* Bottom info */}
-                  <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-gray-900 to-transparent">
+                  <Image
+                    src={image.image}
+                    alt={image.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
+                    className="object-cover transform transition-transform duration-300 group-hover:scale-105"
+                    quality={100}
+                    loading="eager"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-3">
                     <h3 className="font-medium text-white text-sm mb-1 truncate">{image.title}</h3>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300 text-xs">{image.location}</span>
@@ -489,9 +507,15 @@ export default function GalleryPage() {
                 >
                   <div className="relative">
                     <div className="h-72 relative">
-                      {/* Image placeholder */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-gray-700 to-gray-800"></div>
-                      
+                      <Image
+                        src={selectedImage.image}
+                        alt={selectedImage.title}
+                        fill
+                        sizes="(max-width: 1200px) 100vw, 1200px"
+                        className="object-cover"
+                        quality={100}
+                        priority={true}
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-800 to-transparent"></div>
                       <div className="absolute bottom-0 left-0 p-8">
                         <div className="mb-2">

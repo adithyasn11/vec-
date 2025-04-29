@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Orb from '../../components/Orb.jsx';
@@ -25,121 +25,44 @@ export default function DestinationsPage() {
   const destinations = [
     {
       id: 1,
-      name: 'Taj Mahal',
-      location: 'Agra, Uttar Pradesh',
-      description: 'Symbol of eternal love, this ivory-white marble mausoleum on the south bank of the Yamuna river is one of the most recognizable structures in the world.',
-      category: 'heritage',
-      rating: 4.9,
-      price: '₹12,500',
-      duration: '2 days',
-      highlights: ['UNESCO World Heritage Site', 'Mughal Architecture', 'Marble Craftsmanship'],
-      bestTime: 'October to March',
-      image: 'taj-mahal'
+      title: "Taj Mahal",
+      subTitle: "Agra",
+      image: "/destination/taj-mahal.jpg",
+      price: "₹5,000",
+      description: "Experience the magnificient Taj Mahal, a symbol of eternal love.",
     },
     {
       id: 2,
-      name: 'Varanasi',
-      location: 'Uttar Pradesh',
-      description: 'One of the oldest continuously inhabited cities in the world, Varanasi is India\'s spiritual capital with its sacred ghats along the Ganges River.',
-      category: 'spiritual',
-      rating: 4.7,
-      price: '₹15,000',
-      duration: '3 days',
-      highlights: ['Ganga Aarti', 'Ancient Temples', 'Boat Rides on Ganges'],
-      bestTime: 'November to February',
-      image: 'varanasi'
+      title: "Varanasi",
+      subTitle: "Uttar Pradesh",
+      image: "/destination/varanasi.jpg",
+      price: "₹4,500",
+      description: "Explore the spiritual heart of India on the banks of Ganges.",
     },
     {
       id: 3,
-      name: 'Jaipur',
-      location: 'Rajasthan',
-      description: 'Known as the Pink City, Jaipur is famous for its stunning architecture, colorful streets, and royal heritage as part of the Golden Triangle circuit.',
-      category: 'city',
-      rating: 4.8,
-      price: '₹18,000',
-      duration: '4 days',
-      highlights: ['Amer Fort', 'Hawa Mahal', 'City Palace'],
-      bestTime: 'October to March',
-      image: 'jaipur'
+      title: "Jaipur",
+      subTitle: "Rajasthan",
+      image: "/destination/jaipur.jpg",
+      price: "₹6,000",
+      description: "Discover the pink city's royal heritage and magnificent forts.",
     },
     {
       id: 4,
-      name: 'Kerala Backwaters',
-      location: 'Kerala',
-      description: 'A network of interconnected canals, rivers, lakes, and inlets formed by more than 900 km of waterways, surrounded by lush greenery and coconut groves.',
-      category: 'nature',
-      rating: 4.9,
-      price: '₹22,000',
-      duration: '5 days',
-      highlights: ['Houseboat Stay', 'Ayurvedic Treatments', 'Pristine Beaches'],
-      bestTime: 'September to March',
-      image: 'kerala'
+      title: "Kerala",
+      subTitle: "God's Own Country",
+      image: "/destination/kerala.jpg",
+      price: "₹7,500",
+      description: "Relax in the serene backwaters and lush greenery.",
     },
     {
       id: 5,
-      name: 'Himalayan Mountains',
-      location: 'Northern India',
-      description: 'The majestic Himalayan range offers breathtaking landscapes, adventure activities, and spiritual retreats in states like Himachal Pradesh and Uttarakhand.',
-      category: 'adventure',
-      rating: 4.9,
-      price: '₹25,000',
-      duration: '7 days',
-      highlights: ['Trekking', 'River Rafting', 'Spiritual Retreats'],
-      bestTime: 'March to June, September to November',
-      image: 'himalaya'
+      title: "Himalaya",
+      subTitle: "Northern India",
+      image: "/destination/himalaya.jpg",
+      price: "₹8,000",
+      description: "Adventure in the mighty Himalayas with breathtaking views.",
     },
-    {
-      id: 6,
-      name: 'Goa Beaches',
-      location: 'Goa',
-      description: 'India\'s coastal paradise known for its gorgeous beaches, vibrant nightlife, Portuguese architecture, and water sports.',
-      category: 'beach',
-      rating: 4.7,
-      price: '₹20,000',
-      duration: '4 days',
-      highlights: ['Beach Shacks', 'Water Sports', 'Colonial Architecture'],
-      bestTime: 'November to February',
-      image: 'goa'
-    },
-    {
-      id: 7,
-      name: 'Darjeeling',
-      location: 'West Bengal',
-      description: 'This hill station in the foothills of the Himalayas is known for its tea plantations, colonial architecture, and views of Kanchenjunga, the world\'s third-highest mountain.',
-      category: 'nature',
-      rating: 4.6,
-      price: '₹16,500',
-      duration: '4 days',
-      highlights: ['Tea Gardens', 'Toy Train', 'Tiger Hill Sunrise'],
-      bestTime: 'March to May, October to November',
-      image: 'darjeeling'
-    },
-    {
-      id: 8,
-      name: 'Udaipur',
-      location: 'Rajasthan',
-      description: 'Known as the "City of Lakes" and the "Venice of the East", Udaipur is famous for its palaces, lakes, and romantic atmosphere.',
-      category: 'city',
-      rating: 4.8,
-      price: '₹19,500',
-      duration: '3 days',
-      highlights: ['Lake Palace', 'City Palace', 'Boat Rides'],
-      bestTime: 'October to March',
-      image: 'udaipur'
-    },
-    {
-      id: 9,
-      name: 'Rann of Kutch',
-      location: 'Gujarat',
-      description: 'One of the largest salt deserts in the world, this stunning white landscape transforms into a surreal experience during the Rann Utsav festival.',
-      category: 'unique',
-      rating: 4.7,
-      price: '₹17,800',
-      duration: '3 days',
-      highlights: ['White Desert', 'Rann Utsav', 'Local Crafts'],
-      bestTime: 'November to February',
-      image: 'kutch'
-    }
   ];
 
   // Categories for filter
@@ -156,15 +79,67 @@ export default function DestinationsPage() {
 
   // Featured collections
   const collections = [
-    { name: 'Heritage Tour', count: 12, image: 'heritage' },
-    { name: 'Beach Getaways', count: 8, image: 'beach' },
-    { name: 'Mountain Escapes', count: 15, image: 'mountain' }
+    { 
+      name: 'Heritage Tour', 
+      count: 12, 
+      image: '/category/heritage.jpg'
+    },
+    { 
+      name: 'Beach Getaways', 
+      count: 8, 
+      image: '/category/beach.jpg'
+    },
+    { 
+      name: 'Mountain Escapes', 
+      count: 15, 
+      image: '/category/mountain.jpg'
+    }
   ];
 
   // Seasonal recommendations
   const seasonal = [
     { name: 'Winter Wonderlands', description: 'Perfect destinations for the cold season', image: 'winter' },
     { name: 'Monsoon Magic', description: 'Beautiful places to visit during the rains', image: 'monsoon' }
+  ];
+
+  // Gallery images
+  const galleryImages = [
+    {
+      id: 1,
+      title: "Taj Mahal at Sunrise",
+      image: "/gallery/taj-sunrise.jpg",
+      category: "heritage"
+    },
+    {
+      id: 2,
+      title: "Western Ghats Landscape",
+      image: "/gallery/western-ghats.jpg",
+      category: "nature"
+    },
+    {
+      id: 3,
+      title: "Holi Festival Celebrations",
+      image: "/gallery/holi-festival.jpg",
+      category: "culture"
+    },
+    {
+      id: 4,
+      title: "Varanasi Ghats",
+      image: "/gallery/varanasi-ghats.jpg",
+      category: "spiritual"
+    },
+    {
+      id: 5,
+      title: "Bengal Tiger",
+      image: "/gallery/bengal-tiger.jpg",
+      category: "wildlife"
+    },
+    {
+      id: 6,
+      title: "Mumbai Skyline",
+      image: "/gallery/mumbai-skyline.jpg",
+      category: "city"
+    }
   ];
   
   // Initialize component
@@ -186,8 +161,8 @@ export default function DestinationsPage() {
 
   // Filter destinations based on search and category
   const filteredDestinations = destinations.filter(dest => {
-    const matchesSearch = dest.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          dest.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = dest.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         dest.subTitle.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeFilter === 'all' || dest.category === activeFilter;
     return matchesSearch && matchesCategory;
   });
@@ -406,12 +381,64 @@ export default function DestinationsPage() {
                   whileHover={{ y: -5 }}
                   className="relative h-40 rounded-xl overflow-hidden cursor-pointer group"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-indigo-600/30 group-hover:from-purple-600/50 group-hover:to-indigo-600/50 transition-all duration-500"></div>
+                  <Image
+                    src={collection.image}
+                    alt={collection.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+                    className="object-cover"
+                    quality={90}
+                  />
+                  
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
                   <div className="absolute inset-0 flex flex-col justify-end p-5">
                     <h3 className="text-xl font-bold text-white mb-1">{collection.name}</h3>
                     <p className="text-sm text-gray-300">{collection.count} destinations</p>
                     <div className="w-8 h-1 bg-purple-500 mt-2 group-hover:w-16 transition-all duration-300"></div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Featured Gallery */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+            className="w-full max-w-6xl mx-auto mb-16"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Featured Gallery</h2>
+              <button className="text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center">
+                View All
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {galleryImages.map((image, idx) => (
+                <motion.div
+                  key={image.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8 + (idx * 0.1), duration: 0.5 }}
+                  className="relative aspect-[4/3] rounded-xl overflow-hidden group cursor-pointer"
+                >
+                  <Image
+                    src={image.image}
+                    alt={image.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transform transition-transform duration-500 group-hover:scale-110"
+                    quality={90}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 p-4 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <h3 className="text-white font-medium text-lg">{image.title}</h3>
+                    <span className="text-gray-300 text-sm capitalize">{image.category}</span>
                   </div>
                 </motion.div>
               ))}
@@ -441,38 +468,24 @@ export default function DestinationsPage() {
                   transition={{ delay: 1.8 + (idx * 0.1), duration: 0.5 }}
                   whileHover={{ y: -8 }}
                   onClick={() => openDestinationDetails(destination)}
-                  className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer group"
+                  className="bg-gray-800/50 rounded-2xl overflow-hidden cursor-pointer group"
                 >
                   <div className="h-44 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-indigo-600/30 group-hover:opacity-70 transition-opacity duration-700"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                    
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="text-xs px-2 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
-                        {categories.find(c => c.id === destination.category)?.name || destination.category}
-                      </span>
-                    </div>
-                    
-                    <div className="absolute bottom-4 right-4 z-10">
-                      <div className="flex items-center space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <svg 
-                            key={i}
-                            className={`w-4 h-4 ${i < Math.floor(destination.rating) ? 'text-yellow-400' : 'text-gray-500'}`}
-                            fill="currentColor" 
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                        <span className="text-white text-xs ml-1">{destination.rating}</span>
-                      </div>
-                    </div>
+                    <Image 
+                      src={destination.image} 
+                      alt={destination.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transform transition-transform duration-300 group-hover:scale-105"
+                      quality={90}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
                   </div>
                   
                   <div className="p-5">
-                    <h3 className="font-medium text-xl text-white mb-1">{destination.name}</h3>
-                    <p className="text-gray-400 text-sm mb-3">{destination.location}</p>
+                    {/* Title and Subtitle */}
+                    <h3 className="font-medium text-xl text-white mb-1">{destination.title}</h3>
+                    <p className="text-gray-400 text-sm mb-3">{destination.subTitle}</p>
                     
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-2">
@@ -481,8 +494,8 @@ export default function DestinationsPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                           </svg>
                         </div>
-                        <span className="text-gray-400 text-sm">{destination.duration}</span>
                       </div>
+                      {/* Price */}
                       <span className="font-medium text-white">{destination.price}</span>
                     </div>
                     
@@ -570,7 +583,6 @@ export default function DestinationsPage() {
                   {selectedDestination && (
                     <div className="relative">
                       <div className="h-64 relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-600/40 to-indigo-600/40"></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-800 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 p-8">
                         <h2 className="text-4xl font-bold text-white mb-2">{selectedDestination.name}</h2>
