@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Orb from '../../components/Orb.jsx';
 
@@ -98,47 +98,15 @@ export default function DestinationsPage() {
 
   // Seasonal recommendations
   const seasonal = [
-    { name: 'Winter Wonderlands', description: 'Perfect destinations for the cold season', image: 'winter' },
-    { name: 'Monsoon Magic', description: 'Beautiful places to visit during the rains', image: 'monsoon' }
-  ];
-
-  // Gallery images
-  const galleryImages = [
-    {
-      id: 1,
-      title: "Taj Mahal at Sunrise",
-      image: "/gallery/taj-sunrise.jpg",
-      category: "heritage"
+    { 
+      name: 'Winter Wonderlands', 
+      description: 'Perfect destinations for the cold season', 
+      image: '/category/winter.jpg'  // Updated path
     },
-    {
-      id: 2,
-      title: "Western Ghats Landscape",
-      image: "/gallery/western-ghats.jpg",
-      category: "nature"
-    },
-    {
-      id: 3,
-      title: "Holi Festival Celebrations",
-      image: "/gallery/holi-festival.jpg",
-      category: "culture"
-    },
-    {
-      id: 4,
-      title: "Varanasi Ghats",
-      image: "/gallery/varanasi-ghats.jpg",
-      category: "spiritual"
-    },
-    {
-      id: 5,
-      title: "Bengal Tiger",
-      image: "/gallery/bengal-tiger.jpg",
-      category: "wildlife"
-    },
-    {
-      id: 6,
-      title: "Mumbai Skyline",
-      image: "/gallery/mumbai-skyline.jpg",
-      category: "city"
+    { 
+      name: 'Monsoon Magic', 
+      description: 'Beautiful places to visit during the rains', 
+      image: '/category/monsoon.jpg'  // Updated path
     }
   ];
   
@@ -401,50 +369,6 @@ export default function DestinationsPage() {
             </div>
           </motion.div>
 
-          {/* Featured Gallery */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto mb-16"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Featured Gallery</h2>
-              <button className="text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center">
-                View All
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {galleryImages.map((image, idx) => (
-                <motion.div
-                  key={image.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.8 + (idx * 0.1), duration: 0.5 }}
-                  className="relative aspect-[4/3] rounded-xl overflow-hidden group cursor-pointer"
-                >
-                  <Image
-                    src={image.image}
-                    alt={image.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transform transition-transform duration-500 group-hover:scale-110"
-                    quality={90}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute inset-0 p-4 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <h3 className="text-white font-medium text-lg">{image.title}</h3>
-                    <span className="text-gray-300 text-sm capitalize">{image.category}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
           {/* Destinations Grid */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -537,12 +461,24 @@ export default function DestinationsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 2.2 + (idx * 0.1), duration: 0.5 }}
                   whileHover={{ y: -5 }}
-                  className="bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden cursor-pointer group border border-gray-700/30"
+                  className="relative bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden cursor-pointer group border border-gray-700/30"
                 >
-                  <div className="p-6">
+                  <div className="relative h-48">
+                    <Image 
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                      quality={90}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
+                  </div>
+                  
+                  <div className="relative p-6">
                     <div className="flex justify-between items-center mb-4">
                       <h3 className="text-xl font-semibold text-white">{item.name}</h3>
-                      <svg className="w-6 h-6 text-purple-400 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-6 h-6 text-purple-400 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                       </svg>
                     </div>
@@ -551,7 +487,7 @@ export default function DestinationsPage() {
                     
                     <div className="inline-flex items-center space-x-2 text-sm text-purple-400 group-hover:text-purple-300 transition-colors">
                       <span>View Collection</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                       </svg>
                     </div>

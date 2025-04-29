@@ -167,7 +167,8 @@ export default function GalleryPage() {
 
   // Filter gallery based on category
   const filteredImages = galleryImages.filter(image => {
-    return activeFilter === 'all' || image.category === activeFilter;
+    if (activeFilter === 'all') return true;
+    return image.category === activeFilter;
   });
 
   // Featured images - subset used for the showcase
@@ -326,7 +327,11 @@ export default function GalleryPage() {
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => setActiveFilter(category.id)}
+                  onClick={() => {
+                    setActiveFilter(category.id);
+                    setSelectedImage(null);
+                    setShowModal(false);
+                  }}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                     activeFilter === category.id
                       ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
@@ -335,6 +340,69 @@ export default function GalleryPage() {
                 >
                   {category.name}
                 </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Gallery Grid */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.8, duration: 0.8 }}
+            className="w-full max-w-6xl mx-auto mb-16"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">
+                {activeFilter === 'all' ? 'All Photos' : categories.find(c => c.id === activeFilter).name}
+              </h2>
+              <span className="text-sm text-gray-400">{filteredImages.length} photos</span>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredImages.map((image, idx) => (
+                <motion.div
+                  key={image.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8 + (idx * 0.1), duration: 0.5 }}
+                  whileHover={{ 
+                    y: -5,
+                    transition: { duration: 0.2 }
+                  }}
+                  onClick={() => openImageModal(image)}
+                  className="group relative h-64 rounded-lg overflow-hidden cursor-pointer"
+                >
+                  <Image
+                    src={image.image}
+                    alt={image.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transform transition-transform duration-300 group-hover:scale-105"
+                    quality={100} // Increased from default
+                    priority={true} // Added priority loading
+                    style={{ transform: 'translate3d(0, 0, 0)' }} // Added for sharper rendering
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-3">
+                    <h3 className="font-medium text-white text-sm mb-1 truncate">{image.title}</h3>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300 text-xs">{image.location}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-black/50 text-white backdrop-blur-sm">
+                        {categories.find(c => c.id === image.category)?.name}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* View icon on hover */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -378,107 +446,6 @@ export default function GalleryPage() {
                       <span className="text-xs px-2 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
                         {categories.find(c => c.id === image.category)?.name}
                       </span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Gallery Grid */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.8, duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto mb-16"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">
-                {activeFilter === 'all' ? 'All Photos' : categories.find(c => c.id === activeFilter).name}
-              </h2>
-              <span className="text-sm text-gray-400">{filteredImages.length} photos</span>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredImages.map((image, idx) => (
-                <motion.div
-                  key={image.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.8 + (idx * 0.1), duration: 0.5 }}
-                  whileHover={{ 
-                    y: -5,
-                    transition: { duration: 0.2 }
-                  }}
-                  onClick={() => openImageModal(image)}
-                  className="group relative h-48 rounded-lg overflow-hidden cursor-pointer"
-                >
-                  <Image
-                    src={image.image}
-                    alt={image.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw"
-                    className="object-cover transform transition-transform duration-300 group-hover:scale-105"
-                    quality={100}
-                    loading="eager"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute inset-0 flex flex-col justify-end p-3">
-                    <h3 className="font-medium text-white text-sm mb-1 truncate">{image.title}</h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300 text-xs">{image.location}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-black/50 text-white backdrop-blur-sm">
-                        {categories.find(c => c.id === image.category)?.name}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* View icon on hover */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Photo Categories Showcase */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2, duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto mb-16"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Photo Categories</h2>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {categories.filter(c => c.id !== 'all').map((category, idx) => (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 2.2 + (idx * 0.1), duration: 0.5 }}
-                  whileHover={{ y: -5 }}
-                  onClick={() => setActiveFilter(category.id)}
-                  className="bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden cursor-pointer group border border-gray-700/30 h-32 relative"
-                >
-                  {/* Category placeholder gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-800/20 to-indigo-800/20"></div>
-                  
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <h3 className="text-xl font-semibold text-white mb-1">{category.name}</h3>
-                      <div className="w-12 h-1 bg-purple-500 mx-auto group-hover:w-16 transition-all duration-300"></div>
-                      <p className="text-gray-400 text-sm mt-1">
-                        {galleryImages.filter(img => img.category === category.id).length} photos
-                      </p>
                     </div>
                   </div>
                 </motion.div>

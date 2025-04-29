@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Orb from '../../components/Orb.jsx';
+import Image from 'next/image';
 
 export default function ExperiencesPage() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -398,138 +399,11 @@ export default function ExperiencesPage() {
             </div>
           </motion.div>
 
-          {/* Featured Experiences */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto mb-12"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Featured Experiences</h2>
-              <span className="text-xs px-2 py-1 rounded-full bg-indigo-900/50 text-indigo-300 border border-indigo-500/30">
-                Curated Selection
-              </span>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {experiences.filter(exp => exp.featured).slice(0, 2).map((experience, idx) => (
-                <motion.div
-                  key={experience.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.6 + (idx * 0.1), duration: 0.5 }}
-                  whileHover={{ y: -8 }}
-                  onClick={() => openExperienceDetails(experience)}
-                  className="relative h-64 rounded-2xl overflow-hidden cursor-pointer group"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-indigo-600/30 group-hover:from-purple-600/50 group-hover:to-indigo-600/50 transition-all duration-500 z-10"></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent z-20"></div>
-                  
-                  <div className="absolute bottom-0 left-0 z-30 p-6">
-                    <div className="flex items-center mb-2">
-                      <span className="text-xs px-2 py-1 rounded-full bg-purple-500/30 text-purple-200 backdrop-blur-sm border border-purple-400/30">
-                        {experience.type}
-                      </span>
-                      <div className="flex items-center space-x-1 ml-3">
-                        {[...Array(5)].map((_, i) => (
-                          <svg 
-                            key={i}
-                            className={`w-3 h-3 ${i < Math.floor(experience.rating) ? 'text-yellow-400' : 'text-gray-500'}`}
-                            fill="currentColor" 
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </svg>
-                        ))}
-                        <span className="text-white text-xs">{experience.rating}</span>
-                      </div>
-                    </div>
-                    
-                    <h3 className="text-2xl font-bold text-white mb-2">{experience.name}</h3>
-                    <p className="text-gray-300 text-sm mb-4 line-clamp-2">{experience.description}</p>
-                    
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span className="text-gray-300 text-sm">{experience.duration}</span>
-                      </div>
-                      <div className="text-white font-medium">{experience.price}</div>
-                    </div>
-                    
-                    <div className="w-0 h-1 bg-purple-500 mt-4 group-hover:w-full transition-all duration-500"></div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-          
-          {/* Trending Now Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.8, duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto mb-12"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Trending Experiences</h2>
-              <div className="flex items-center text-xs text-purple-300">
-                <span className="mr-1">Updated Weekly</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {trending.map((item, idx) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 2 + (idx * 0.1), duration: 0.5 }}
-                  whileHover={{ y: -5 }}
-                  className="bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden cursor-pointer group border border-gray-700/30 p-5"
-                >
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-lg font-semibold text-white">{item.name}</h3>
-                    <span className="text-green-400 text-sm font-medium flex items-center">
-                      {item.increase}
-                      <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                      </svg>
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-400 text-sm mb-4">{item.description}</p>
-                  
-                  <div className="flex justify-between items-center">
-                    <div className="flex -space-x-2">
-                      {[...Array(3)].map((_, i) => (
-                        <div key={i} className="w-6 h-6 rounded-full bg-gray-600 border-2 border-gray-800"></div>
-                      ))}
-                      <div className="w-6 h-6 rounded-full bg-gray-800 border-2 border-gray-800 flex items-center justify-center text-xs text-gray-400">+4</div>
-                    </div>
-                    
-                    <div className="text-purple-400 text-sm group-hover:text-purple-300 transition-colors flex items-center">
-                      <span>Discover</span>
-                      <svg className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                      </svg>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* All Experiences Grid */}
+          {/* All Experiences Grid - Moved to top */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 2.2, duration: 0.8 }}
+            transition={{ delay: 1.4, duration: 0.8 }}
             className="w-full max-w-6xl mx-auto mb-16"
           >
             <div className="flex justify-between items-center mb-6">
@@ -551,7 +425,13 @@ export default function ExperiencesPage() {
                   className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer group border border-gray-700/20"
                 >
                   <div className="h-44 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-indigo-600/30 group-hover:opacity-70 transition-opacity duration-700 z-10"></div>
+                    <Image
+                      src={`/experiences/${experience.image}.jpg`}
+                      alt={experience.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent z-20"></div>
                     
                     <div className="absolute top-4 left-4 z-30">
@@ -628,6 +508,171 @@ export default function ExperiencesPage() {
               </div>
             )}
           </motion.div>
+
+          {/* Featured Experiences - Moved below */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.2, duration: 0.8 }}
+            className="w-full max-w-6xl mx-auto mb-12"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Featured Experiences</h2>
+              <span className="text-xs px-2 py-1 rounded-full bg-indigo-900/50 text-indigo-300 border border-indigo-500/30">
+                Curated Selection
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {experiences.filter(exp => exp.featured).slice(0, 2).map((experience, idx) => (
+                <motion.div
+                  key={experience.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.6 + (idx * 0.1), duration: 0.5 }}
+                  whileHover={{ y: -8 }}
+                  onClick={() => openExperienceDetails(experience)}
+                  className="relative h-64 rounded-2xl overflow-hidden cursor-pointer group"
+                >
+                  <Image
+                    src={`/experiences/${experience.image}.jpg`}
+                    alt={experience.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    priority={idx === 0}
+                    quality={90}
+                  />
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent z-20"></div>
+                  
+                  <div className="absolute bottom-0 left-0 z-30 p-6">
+                    <div className="flex items-center mb-2">
+                      <span className="text-xs px-2 py-1 rounded-full bg-purple-500/30 text-purple-200 backdrop-blur-sm border border-purple-400/30">
+                        {experience.type}
+                      </span>
+                      <div className="flex items-center space-x-1 ml-3">
+                        {[...Array(5)].map((_, i) => (
+                          <svg 
+                            key={i}
+                            className={`w-3 h-3 ${i < Math.floor(experience.rating) ? 'text-yellow-400' : 'text-gray-500'}`}
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                        <span className="text-white text-xs">{experience.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-white mb-2">{experience.name}</h3>
+                    <p className="text-gray-300 text-sm mb-4 line-clamp-2">{experience.description}</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span className="text-gray-300 text-sm">{experience.duration}</span>
+                      </div>
+                      <div className="text-white font-medium">{experience.price}</div>
+                    </div>
+                    
+                    <div className="w-0 h-1 bg-purple-500 mt-4 group-hover:w-full transition-all duration-500"></div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Trending Now Section - Moved to bottom */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.4, duration: 0.8 }}
+            className="w-full max-w-6xl mx-auto mb-12"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Trending Experiences</h2>
+              <div className="flex items-center text-xs text-purple-300">
+                <span className="mr-1">Updated Weekly</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {trending.map((item, idx) => (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 2 + (idx * 0.1), duration: 0.5 }}
+                  whileHover={{ y: -5 }}
+                  className="relative bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden cursor-pointer group border border-gray-700/30"
+                >
+                  <div className="h-48 relative">
+                    <Image
+                      src={`/experiences/${item.image}.jpg`}
+                      alt={item.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
+                  </div>
+                  
+                  <div className="p-5 relative">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="text-lg font-semibold text-white">{item.name}</h3>
+                      <span className="text-green-400 text-sm font-medium flex items-center bg-green-900/20 px-2 py-1 rounded-full">
+                        {item.increase}
+                        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                      </span>
+                    </div>
+                    
+                    <p className="text-gray-400 text-sm mb-4">{item.description}</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="flex -space-x-2">
+                        {[...Array(3)].map((_, i) => (
+                          <div 
+                            key={i} 
+                            className="w-6 h-6 rounded-full bg-gray-600 border-2 border-gray-800 relative overflow-hidden"
+                          >
+                            <Image
+                              src={`/experiences/${item.image}.jpg`}
+                              alt=""
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
+                        <div className="w-6 h-6 rounded-full bg-gray-800 border-2 border-gray-800 flex items-center justify-center text-xs text-gray-400">
+                          +4
+                        </div>
+                      </div>
+                      
+                      <div className="text-purple-400 text-sm group-hover:text-purple-300 transition-colors flex items-center">
+                        <span>Discover</span>
+                        <svg 
+                          className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
       </div>
 
@@ -649,7 +694,14 @@ export default function ExperiencesPage() {
               onClick={e => e.stopPropagation()}
             >
               <div className="h-56 sm:h-72 relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/40 to-indigo-600/40 z-10"></div>
+                <Image
+                  src={`/experiences/${selectedExperience.image}.jpg`}
+                  alt={selectedExperience.name}
+                  fill
+                  className="object-cover"
+                  priority
+                  quality={95}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent z-20"></div>
                 
                 <button 
