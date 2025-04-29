@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation, useScroll } from 'framer-motion';
 import Orb from '../../components/Orb.jsx';
+import { toast } from 'react-hot-toast';
 
 export default function HomePage() {
   const [currentLocation, setCurrentLocation] = useState(0);
@@ -10,6 +11,10 @@ export default function HomePage() {
   const [orbHovered, setOrbHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState('');
   const containerRef = useRef(null);
   const orbControls = useAnimation();
   const { scrollYProgress } = useScroll({
@@ -44,35 +49,86 @@ export default function HomePage() {
     'Majestic mountains touching the sky'
   ];
 
- 
-  const recentBookings = [
-    { id: 1, destination: 'Jaipur', date: 'May 15, 2025', status: 'Confirmed', price: '₹24,500' },
-    { id: 2, destination: 'Kerala', date: 'July 3, 2025', status: 'Pending', price: '₹18,900' },
-    { id: 3, destination: 'Taj Mahal', date: 'June 12, 2025', status: 'Confirmed', price: '₹12,350' },
+  const locationDetails = [
+    { location: 'Taj Mahal', price: '₹12,350', place: 'Agra, UP', duration: '5-7 days' },
+    { location: 'Varanasi', price: '₹14,500', place: 'Varanasi, UP', duration: '4-6 days' },
+    { location: 'Jaipur', price: '₹24,500', place: 'Jaipur, Rajasthan', duration: '5-7 days' },
+    { location: 'Kerala', price: '₹18,900', place: 'Kerala', duration: '6-8 days' },
+    { location: 'Himalaya', price: '₹28,700', place: 'Himachal Pradesh', duration: '7-10 days' }
   ];
+ 
+  // Load bookings from localStorage
+  useEffect(() => {
+    try {
+      const savedBookings = localStorage.getItem('bookings');
+      if (savedBookings) {
+        setBookings(JSON.parse(savedBookings));
+      }
+      
+      const savedFavorites = localStorage.getItem('favorites');
+      if (savedFavorites) {
+        setFavorites(JSON.parse(savedFavorites));
+      }
+    } catch (error) {
+      console.error("Error loading data from localStorage:", error);
+    }
+  }, []);
 
+  // Save bookings to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('bookings', JSON.stringify(bookings));
+  }, [bookings]);
   
-  const recommendations = [
-    { name: 'Goa', rating: 4.8, category: 'Beaches', price: '₹15,000', duration: '5 days' },
-    { name: 'Udaipur', rating: 4.9, category: 'Palace', price: '₹22,500', duration: '4 days' },
-    { name: 'Darjeeling', rating: 4.7, category: 'Mountains', price: '₹19,800', duration: '6 days' }
-  ];
+  // Save favorites to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
- 
   const specialOffers = [
     { title: 'Golden Triangle Tour', discount: '15% OFF', validUntil: 'May 30' },
     { title: 'Kerala Backwaters', discount: '₹5,000 OFF', validUntil: 'June 15' },
     { title: 'Himalayan Adventure', discount: 'FREE Hotel Upgrade', validUntil: 'Limited Time' },
   ];
 
- 
+  // Trip stats based on actual bookings and favorites
   const tripStats = {
-    visited: 3,
-    upcoming: 2,
-    wishlist: 5,
-    reviews: 8
+    visited: Math.min(3, bookings.filter(booking => new Date(booking.date) < new Date()).length),
+    upcoming: bookings.filter(booking => new Date(booking.date) >= new Date()).length,
+    wishlist: favorites.length,
+    reviews: Math.floor(Math.random() * 10) + 3
   };
 
+  // Add a new booking
+  const addBooking = (location) => {
+    const locationInfo = locationDetails.find(loc => loc.location === location);
+    if (!locationInfo) return;
+    
+    const newBooking = {
+      id: Date.now(),
+      destination: location,
+      date: new Date(Date.now() + Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      status: 'Pending',
+      price: locationInfo.price
+    };
+    
+    setBookings(prev => [...prev, newBooking]);
+    toast.success(`Booking for ${location} added successfully!`);
+  };
+
+  // Toggle favorite
+  const toggleFavorite = (location) => {
+    if (favorites.includes(location)) {
+      setFavorites(favorites.filter(fav => fav !== location));
+      toast.success(`${location} removed from favorites`);
+    } else {
+      setFavorites([...favorites, location]);
+      toast.success(`${location} added to favorites`);
+    }
+  };
   
   useEffect(() => {
     setIsMounted(true);
@@ -170,7 +226,8 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      
+      {/* Toast notifications container */}
+      <div id="toast-container" className="fixed top-4 right-4 z-50"></div>
 
       {/* Main content area - with non-fixed background to allow footer to be visible */}
       <div 
@@ -267,27 +324,50 @@ export default function HomePage() {
               transition={{ duration: 0.8, delay: 1.4 }}
               className="flex flex-wrap justify-center gap-3 mb-8"
             >
-              <button className="px-5 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium text-sm hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 flex items-center">
+              
+              <a href="/destinations">
+              <button 
+                onClick={() => setActiveTab('discover')}
+                className="px-5 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium text-sm hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 flex items-center"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 Find Adventures
               </button>
-              <button className="px-5 py-2 rounded-full bg-gray-800 text-gray-300 font-medium text-sm hover:bg-gray-700 transition-all duration-300 flex items-center">
+            </a>
+
+            <a href="/favorite">
+              <button 
+                onClick={() => setActiveTab('favorites')}
+                className="px-5 py-2 rounded-full bg-gray-800 text-gray-300 font-medium text-sm hover:bg-gray-700 transition-all duration-300 flex items-center"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                 </svg>
-                Recent Trips
+                Favorites
+                {favorites.length > 0 && (
+                  <span className="ml-2 bg-purple-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                    {favorites.length}
+                  </span>
+                )}
               </button>
-              <button className="px-5 py-2 rounded-full bg-gray-800 text-gray-300 font-medium text-sm hover:bg-gray-700 transition-all duration-300 flex items-center">
+            </a>
+
+            <a href="/bookings">
+            <button 
+                onClick={goToBookings}
+                className="px-5 py-2.5 bg-gray-800/70 backdrop-blur-sm rounded-lg text-gray-300 text-sm font-medium hover:bg-gray-700 transition-all duration-300 flex items-center"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
-                New Booking
+                My Bookings
               </button>
+            </a>
             </motion.div>
           </motion.div>
-
+          
           {/* Main Dashboard Grid */}
           <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
             {/* Left Column: Featured Location */}
@@ -295,7 +375,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="md:col-span-8 bg-gray-800/50 backdrop-blur-md rounded-2xl overflow-hidden relative transition-all duration-300 min-h-[300px]"
+              className="md:col-span-8 bg-gray-800/50 backdrop-blur-md rounded-2xl overflow-hidden relative transition-all duration-300 min-h-[300px] border border-gray-700/30 hover:border-purple-500/30"
             >
               <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/90 z-10"></div>
               
@@ -339,8 +419,21 @@ export default function HomePage() {
                     transition={{ delay: 1.2, duration: 0.8 }}
                     className="flex space-x-2"
                   >
-                    <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800/70 text-gray-300 hover:text-white transition-colors backdrop-blur-sm">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <button 
+                      onClick={() => toggleFavorite(locations[currentLocation])}
+                      className={`w-8 h-8 flex items-center justify-center rounded-full ${
+                        favorites.includes(locations[currentLocation]) 
+                          ? 'bg-purple-600 text-white' 
+                          : 'bg-gray-800/70 text-gray-300 hover:text-white'
+                      } transition-colors backdrop-blur-sm`}
+                    >
+                      <svg 
+                        className="w-4 h-4" 
+                        fill={favorites.includes(locations[currentLocation]) ? "currentColor" : "none"} 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                       </svg>
                     </button>
@@ -391,30 +484,36 @@ export default function HomePage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        <span>{['Agra, UP', 'Varanasi, UP', 'Jaipur, Rajasthan', 'Kerala', 'Himachal Pradesh'][currentLocation]}</span>
+                        <span>{locationDetails[currentLocation].place}</span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-gray-300">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span>5-7 days recommended</span>
+                        <span>{locationDetails[currentLocation].duration} recommended</span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-gray-300">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                         </svg>
-                        <span>Starting from ₹15,000</span>
+                        <span>Starting from {locationDetails[currentLocation].price}</span>
                       </div>
                     </div>
                     
                     <div className="flex flex-wrap gap-3">
-                      <button className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 transition-all duration-300 flex items-center">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        Book Experience
-                      </button>
-                      <button className="px-5 py-2.5 bg-gray-800/70 backdrop-blur-sm rounded-lg text-gray-300 text-sm font-medium hover:bg-gray-700 transition-all duration-300 flex items-center">
+                    <button 
+                      onClick={() => addBooking(locations[currentLocation])}
+                      className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 transition-all duration-300 flex items-center"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                      </svg>
+                      Book Experience
+                    </button>
+                      <button 
+                        onClick={() => setActiveTab('details')}
+                        className="px-5 py-2.5 bg-gray-800/70 backdrop-blur-sm rounded-lg text-gray-300 text-sm font-medium hover:bg-gray-700 transition-all duration-300 flex items-center"
+                      >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m-6-8h6M5 8h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2z"></path>
                         </svg>
@@ -493,52 +592,10 @@ export default function HomePage() {
                 </div>
               </div>
               
-              {/* Recent Bookings */}
-              <div className="bg-gray-800/50 backdrop-blur-md rounded-2xl p-6 border border-gray-700/50 flex-grow">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-medium text-white">Recent Bookings</h2>
-                  <span className="text-xs px-2 py-1 rounded-full bg-indigo-900/50 text-indigo-300 border border-indigo-500/30">
-                    {recentBookings.length} active
-                  </span>
-                </div>
-                
-                <div className="space-y-3 mb-4">
-                  {recentBookings.slice(0, 2).map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="flex justify-between items-center bg-gray-900/60 p-3 rounded-lg hover:bg-gray-900/80 transition-all duration-300 cursor-pointer"
-                    >
-                      <div>
-                        <p className="font-medium text-white">{booking.destination}</p>
-                        <div className="flex items-center text-xs text-gray-400 mt-1">
-                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                          </svg>
-                          {booking.date}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          booking.status === 'Confirmed' ? 'bg-green-900/50 text-green-400 border border-green-500/30' : 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
-                        }`}>
-                          {booking.status}
-                        </span>
-                        <p className="text-xs text-gray-400 mt-1">{booking.price}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <button className="w-full py-2.5 bg-gray-900/60 rounded-lg text-sm flex items-center justify-center text-gray-300 hover:bg-gray-700 transition-all duration-300">
-                  <span>View All Bookings</span>
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                  </svg>
-                </button>
-              </div>
+              
             </motion.div>
           </div>
-          
+
           {/* Special Offers & Popular Destinations */}
           <div className="w-full max-w-6xl mx-auto mb-16">
             {/* Section Header */}
@@ -558,6 +615,7 @@ export default function HomePage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1, duration: 0.8 }}
                 className="text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center"
+                onClick={() => setActiveTab('offers')}
               >
                 View All Offers
                 <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -607,7 +665,29 @@ export default function HomePage() {
                       <span className="font-bold text-2xl text-purple-400">{offer.discount}</span>
                     </div>
                     
-                    <button className="w-full py-2.5 bg-gray-900/70 rounded-lg text-white text-sm font-medium hover:bg-gray-900 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600">
+                    <button 
+                      className="w-full py-2.5 bg-gray-900/70 rounded-lg text-white text-sm font-medium hover:bg-gray-900 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600"
+                      onClick={() => {
+                        const destination = offer.title.split(' ')[0];
+                        const matchingLocation = locations.find(loc => loc.includes(destination));
+                        if (matchingLocation) {
+                          addBooking(matchingLocation);
+                        } else {
+                          toast.success(`Booked special offer: ${offer.title}`);
+                          setBookings(prev => [...prev, {
+                            id: Date.now(),
+                            destination: offer.title,
+                            date: new Date(Date.now() + Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            }),
+                            status: 'Pending',
+                            price: offer.discount
+                          }]);
+                        }
+                      }}
+                    >
                       Book Now
                     </button>
                   </div>
@@ -615,134 +695,317 @@ export default function HomePage() {
               ))}
             </div>
             
-            {/* Recommendations Section */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-6">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.4, duration: 0.8 }}
-                >
-                  <h2 className="text-2xl font-bold text-white">Recommended For You</h2>
-                  <p className="text-gray-400 text-sm">Based on your travel history</p>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 1.4, duration: 0.8 }}
-                  className="flex items-center space-x-2"
-                >
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:text-white transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                  </button>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:text-white transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                  </button>
-                </motion.div>
-              </div>
+            {/* Popular Destinations */}
+            <div className="mb-6 flex flex-wrap justify-between items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.3, duration: 0.8 }}
+                className="mb-4 sm:mb-0"
+              >
+                <h2 className="text-2xl font-bold text-white">Popular Destinations</h2>
+                <p className="text-gray-400 text-sm">Most loved places in India</p>
+              </motion.div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recommendations.map((rec, idx) => (
-                  <motion.div
-                    key={rec.name}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.6 + (idx * 0.2) }}
-                    whileHover={{ y: -8 }}
-                    className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden cursor-pointer group"
-                  >
-                    <div className="h-40 relative overflow-hidden">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${
-                        idx === 0 ? 'from-blue-500/30 to-indigo-600/30' :
-                        idx === 1 ? 'from-amber-500/30 to-purple-600/30' :
-                        'from-green-500/30 to-teal-600/30'
-                      } group-hover:opacity-80 transition-opacity duration-700`} />
-                      
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
-                      
-                      <div className="absolute top-4 left-4 z-10">
-                        <span className="text-xs px-2 py-1 rounded-full bg-black/50 text-white backdrop-blur-sm">
-                          {rec.category}
-                        </span>
+              <motion.button 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.3, duration: 0.8 }}
+                className="text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center"
+                onClick={() => setActiveTab('discover')}
+              >
+                View All Destinations
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+              </motion.button>
+            </div>
+            
+            {/* Destinations Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {locations.slice(0, 3).map((location, idx) => (
+                <motion.div
+                  key={location}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.5 + (idx * 0.2) }}
+                  whileHover={{ y: -5 }}
+                  className="relative rounded-xl overflow-hidden group cursor-pointer h-64"
+                >
+                  {/* Background Gradient */}
+                  <div 
+                    className="absolute inset-0 transition-all duration-500"
+                    style={{
+                      background: `radial-gradient(circle at 50% 50%, 
+                        ${locationThemes[idx].primary}40 0%, 
+                        ${locationThemes[idx].secondary}40 60%, 
+                        rgba(17, 24, 39, 0.9) 100%)`
+                    }}
+                  />
+                  
+                  {/* Content */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                    <div className="flex justify-between items-start">
+                      <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-900/50 text-white backdrop-blur-sm">
+                        {locationDetails[idx].duration}
                       </div>
                       
-                      <div className="absolute bottom-4 right-4 z-10">
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <svg 
-                              key={i}
-                              className={`w-4 h-4 ${i < Math.floor(rec.rating) ? 'text-yellow-400' : 'text-gray-500'}`}
-                              fill="currentColor" 
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
-                          <span className="text-white text-xs ml-1">{rec.rating}</span>
-                        </div>
-                      </div>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(location);
+                        }}
+                        className={`w-8 h-8 flex items-center justify-center rounded-full ${
+                          favorites.includes(location) 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-800/70 text-gray-300 hover:text-white'
+                        } transition-colors backdrop-blur-sm`}
+                      >
+                        <svg 
+                          className="w-4 h-4" 
+                          fill={favorites.includes(location) ? "currentColor" : "none"} 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24" 
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                      </button>
                     </div>
                     
-                    <div className="p-5">
-                      <h3 className="font-medium text-xl text-white mb-2">{rec.name}</h3>
-                      
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-purple-400">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                          </div>
-                          <span className="text-gray-400 text-sm">{rec.duration}</span>
-                        </div>
-                        <span className="font-medium text-white">{rec.price}</span>
+                    <div>
+                      <div className="flex items-center space-x-1 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <svg 
+                            key={i}
+                            className="w-4 h-4 text-yellow-400"
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
                       </div>
                       
-                      <div className="flex space-x-2">
-                        <button className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <h3 className="text-xl font-bold text-white mb-1">{location}</h3>
+                      <p className="text-gray-300 text-sm mb-3">{descriptions[idx]}</p>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-white font-semibold">{locationDetails[idx].price}</span>
+                        
+                        <button 
+                          onClick={() => addBooking(location)}
+                          className="px-3 py-1 bg-purple-600 rounded-lg text-white text-xs font-medium hover:bg-purple-500 transition-all duration-300"
+                        >
                           Book Now
-                        </button>
-                        <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-700 text-white">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                          </svg>
                         </button>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          {/* Destinations Indicator Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.8, duration: 0.8 }}
-            className="w-full max-w-3xl mx-auto flex justify-center mb-12"
-          >
-            <div className="bg-gray-800/30 backdrop-blur-md rounded-full px-4 py-3 flex space-x-6 border border-gray-700/30">
-              {locations.map((location, i) => (
-                <div
-                  key={`dest-${i}`}
-                  onClick={() => setCurrentLocation(i)}
-                  className={`flex cursor-pointer flex-col items-center transition-all duration-300 px-3 py-1 rounded-full ${
-                    currentLocation === i ? 'bg-gray-700/70' : 'hover:bg-gray-800/50'
-                  }`}
-                >
-                  <span className={`text-sm font-medium ${currentLocation === i ? 'text-white' : 'text-gray-400'}`}>
-                    {location}
-                  </span>
-                </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
-          </motion.div>
+          </div>
+
+          {/* Conditional Content Based on Active Tab */}
+          <AnimatePresence mode="wait">
+            {activeTab === 'favorites' && (
+              <motion.div
+                key="favorites-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-6xl mx-auto mb-16"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white">Your Favorites</h2>
+                  <button 
+                    onClick={() => setActiveTab('discover')}
+                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    Back to Discover
+                  </button>
+                </div>
+                
+                {favorites.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {favorites.map((favLocation, idx) => {
+                      const locationIndex = locations.findIndex(loc => loc === favLocation);
+                      return (
+                        <div
+                          key={favLocation}
+                          className="bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-gray-700/50 group"
+                        >
+                          <div className="p-6">
+                            <div 
+                              className="h-32 mb-4 rounded-lg bg-gray-900/70 flex items-center justify-center"
+                              style={{
+                                background: `radial-gradient(circle at 50% 50%, 
+                                  ${locationThemes[locationIndex]?.primary || locationThemes[0].primary}30 0%, 
+                                  ${locationThemes[locationIndex]?.secondary || locationThemes[0].secondary}30 70%, 
+                                  rgba(17, 24, 39, 0.9) 100%)`
+                              }}
+                            >
+                              <h3 className="text-2xl font-bold text-white">{favLocation}</h3>
+                            </div>
+                            
+                            <p className="text-gray-300 text-sm mb-4">
+                              {descriptions[locationIndex] || "A beautiful destination in India"}
+                            </p>
+                            
+                            <div className="flex justify-between">
+                              <button 
+                                onClick={() => toggleFavorite(favLocation)}
+                                className="px-4 py-2 bg-red-600/80 rounded-lg text-white text-sm font-medium hover:bg-red-500 transition-all duration-300 flex items-center"
+                              >
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                Remove
+                              </button>
+                              
+                              <button 
+                                onClick={() => addBooking(favLocation)}
+                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 transition-all duration-300"
+                              >
+                                Book Now
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-10 text-center border border-gray-700/50">
+                    <svg className="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <h3 className="text-xl font-bold text-white mb-2">No favorites yet</h3>
+                    <p className="text-gray-400 mb-6">Add destinations to your favorites to see them here</p>
+                    <button 
+                      onClick={() => setActiveTab('discover')}
+                      className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 transition-all duration-300"
+                    >
+                      Discover Places
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
+            
+            {activeTab === 'bookings' && (
+              <motion.div
+                key="bookings-section"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-6xl mx-auto mb-16"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-white">Your Bookings</h2>
+                  <button 
+                    onClick={() => setActiveTab('discover')}
+                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                  >
+                    Back to Discover
+                  </button>
+                </div>
+                
+                {bookings.length > 0 ? (
+                  <div className="bg-gray-800/50 backdrop-blur-md rounded-xl overflow-hidden border border-gray-700/50">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gray-900/70">
+                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-300">Destination</th>
+                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-300">Date</th>
+                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-300">Price</th>
+                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-300">Status</th>
+                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-300">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-700/30">
+                          {bookings.map((booking) => (
+                            <tr key={booking.id} className="hover:bg-gray-700/20 transition-colors">
+                              <td className="py-4 px-4 text-sm text-white">{booking.destination}</td>
+                              <td className="py-4 px-4 text-sm text-gray-300">{booking.date}</td>
+                              <td className="py-4 px-4 text-sm text-gray-300">{booking.price}</td>
+                              <td className="py-4 px-4">
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  booking.status === 'Confirmed' ? 'bg-green-900/50 text-green-400 border border-green-500/30' : 'bg-yellow-900/50 text-yellow-400 border border-yellow-500/30'
+                                }`}>
+                                  {booking.status}
+                                </span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <button 
+                                  onClick={() => {
+                                    setBookings(bookings.filter(b => b.id !== booking.id));
+                                    toast.success(`Booking for ${booking.destination} cancelled`);
+                                  }}
+                                  className="text-red-400 hover:text-red-300 transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gray-800/50 backdrop-blur-md rounded-xl p-10 text-center border border-gray-700/50">
+                    <svg className="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 className="text-xl font-bold text-white mb-2">No bookings yet</h3>
+                    <p className="text-gray-400 mb-6">Book your first adventure to get started</p>
+                    <button 
+                      onClick={() => setActiveTab('discover')}
+                      className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white text-sm font-medium hover:from-indigo-500 hover:to-purple-500 transition-all duration-300"
+                    >
+                      Explore Destinations
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Mobile Navigation */}
+          <div className="fixed bottom-0 left-0 right-0 bg-gray-900/80 backdrop-blur-md border-t border-gray-800 py-2 px-4 z-40 md:hidden">
+            <div className="flex justify-around items-center">
+              {navOptions.map(option => (
+                <button
+                  key={option.id}
+                  onClick={() => setActiveTab(option.id)}
+                  className={`flex flex-col items-center py-1 px-3 rounded-lg ${
+                    activeTab === option.id ? 'text-purple-400' : 'text-gray-400'
+                  }`}
+                >
+                  <svg className="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    {option.icon === 'compass' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    )}
+                    {option.icon === 'calendar' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    )}
+                    {option.icon === 'user' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    )}
+                    {option.icon === 'map' && (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    )}
+                  </svg>
+                  <span className="text-xs">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Clear margin at the bottom to ensure Footer visibility */}
           <div className="w-full h-24"></div>
@@ -755,53 +1018,94 @@ export default function HomePage() {
             style={{ scaleX: scrollYProgress }}
           />
         )}
-
-        {/* Floating action buttons */}
-        <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-40">
-          <div className="flex flex-col space-y-4">
-            {[
-              { icon: "search", tooltip: "Search Destinations" },
-              { icon: "heart", tooltip: "Saved Favorites" },
-              { icon: "support", tooltip: "24/7 Support" },
-              { icon: "settings", tooltip: "Settings" }
-            ].map((item, idx) => (
-              <div key={`action-${idx}`} className="relative group">
-                <button className="w-12 h-12 rounded-full bg-gray-800/80 backdrop-blur-md flex items-center justify-center text-white border border-gray-700/50 hover:border-purple-500/70 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-purple-600/90 group-hover:to-indigo-600/90">
-                  {item.icon === "search" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                  )}
-                  {item.icon === "heart" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                    </svg>
-                  )}
-                  {item.icon === "support" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                  )}
-                  {item.icon === "settings" && (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-2.924-1.756-3.35 0a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                  )}
-                </button>
-                
-                {/* Tooltip */}
-                <div className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 px-3 py-1.5 rounded-lg bg-gray-800 text-white text-sm whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                  {item.tooltip}
-                  <div className="absolute top-1/2 right-0 transform translate-x-1 -translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       
-    </div>
+
+
+</div>
   );
 }
+
+const renderNotification = () => {
+  return (
+    <AnimatePresence>
+      {showNotification && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          transition={{ duration: 0.3 }}
+          className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 bg-gray-800 border border-purple-500/30 rounded-lg shadow-lg backdrop-blur-sm"
+        >
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-full bg-purple-600/30 flex items-center justify-center">
+              <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <span className="text-white">{notificationMessage}</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const goToBookings = () => {
+  window.location.href = '/bookings';
+};
+
+const addBooking = (locationName) => {
+  // Find the location details
+  const locationIndex = locations.findIndex(loc => loc === locationName);
+  
+  // Create a new booking object
+  const newBooking = {
+    id: `destination-${locationIndex}`,
+    name: locationName,
+    location: locationDetails[locationIndex].place,
+    price: locationDetails[locationIndex].price,
+    duration: locationDetails[locationIndex].duration.split(' ')[0], // Extract just the number
+    bookingId: `BK-${Math.floor(Math.random() * 10000)}`,
+    bookingDate: new Date().toISOString(),
+    status: 'Confirmed',
+    paymentStatus: 'Paid',
+    guests: 2
+  };
+  
+  // Store the booking in localStorage
+  const storedBookings = localStorage.getItem('userBookings');
+  let bookings = [];
+  
+  if (storedBookings) {
+    bookings = JSON.parse(storedBookings);
+  }
+  
+  // Check if this destination is already booked
+  const existingBooking = bookings.find(booking => booking.id === newBooking.id);
+  
+  if (!existingBooking) {
+    // Add the new booking
+    bookings.push(newBooking);
+    
+    // Update localStorage
+    localStorage.setItem('userBookings', JSON.stringify(bookings));
+    
+    // Show notification
+    setNotificationMessage(`${locationName} added to your bookings!`);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+    
+    // Dispatch custom event for inter-page communication
+    const bookingEvent = new CustomEvent('bookingAdded', {
+      detail: newBooking
+    });
+    window.dispatchEvent(bookingEvent);
+  } else {
+    // Show notification for already booked
+    setNotificationMessage(`${locationName} is already in your bookings`);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  }
+};
