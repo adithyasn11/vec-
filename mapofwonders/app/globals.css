@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Remove focus outlines for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Keep focus outlines for keyboard users - for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   CURSOR AND TEXT SELECTION FIXES
+   ========================================== */
+
+/* Global cursor fix for the entire application */
+html, body, div, p, span, h1, h2, h3, h4, h5, h6, 
+section, article, aside, nav, header, footer, main, 
+ul, ol, li, table, tr, td, th, figure, figcaption, 
+address, blockquote, dd, dl, pre {
+  cursor: default !important;
+  -webkit-user-modify: read-only !important;
+  -moz-user-modify: read-only !important;
+  user-modify: read-only !important;
+}
+
+/* Only show text cursor on elements that should be editable */
+input, textarea, [contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* Make links and buttons have pointer cursor */
+a, button, [role="button"], [type="button"], [type="submit"], 
+[type="reset"], .clickable, .button, .btn {
+  cursor: pointer !important;
+}
+
+/* Text selection behavior control */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow text selection but prevent cursor appearance */
+p, h1, h2, h3, h4, h5, h6, span, div, li {
+  user-select: text;
+  -webkit-user-select: text;
+}
