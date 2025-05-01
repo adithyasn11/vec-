@@ -41,7 +41,7 @@ export default function AboutPage() {
       name: 'Ashiq',
       role: 'UI/UX Designer',
       bio: 'Created the visual identity and user experience flow for the photography platform, ensuring intuitive navigation.',
-      expertise: ['Visual Design', 'User Experience', 'Prototyping'],
+      expertise: ['Visual Design', 'Idea'],
       photo: '/team/ashiq.jpg'
     },
     {
@@ -49,7 +49,7 @@ export default function AboutPage() {
       name: 'Ashmika',
       role: 'Content Strategist',
       bio: 'Developed the content framework and organization system for showcasing the photography collection effectively.',
-      expertise: ['Content Strategy', 'Digital Curation', 'SEO'],
+      expertise: ['Content Strategy', 'Digital Curation'],
       photo: '/team/ashmika.jpg'
     }
   ];

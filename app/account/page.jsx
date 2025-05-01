@@ -141,10 +141,7 @@ export default function ProfilePage() {
   
   // Tab navigation
   const tabs = [
-    { id: 'profile', label: 'Profile' },
-    { id: 'collections', label: 'Collections' },
-    { id: 'favorites', label: 'Favorites' },
-    { id: 'settings', label: 'Settings' }
+    { id: 'profile', label: 'Profile' }
   ];
 
   return (

@@ -564,15 +564,7 @@ export default function HomePage() {
                       </svg>
                       Book Experience
                     </button>
-                      <button 
-                        onClick={() => setActiveTab('details')}
-                        className="px-5 py-2.5 bg-gray-800/70 backdrop-blur-sm rounded-lg text-gray-300 text-sm font-medium hover:bg-gray-700 transition-all duration-300 flex items-center"
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m-6-8h6M5 8h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2z"></path>
-                        </svg>
-                        View Details
-                      </button>
+                      
                     </div>
                   </motion.div>
                 </AnimatePresence>
