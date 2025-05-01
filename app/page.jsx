@@ -225,53 +225,83 @@ export default function LandingPage() {
 
       {/* Main Content with higher z-index */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-white">
-        <motion.div
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="text-center relative z-20"
+  <motion.div
+    initial={{ y: -50, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+    className="text-center relative z-20 bg-black bg-opacity-35 p-8 rounded-xl backdrop-blur-sm shadow-2xl border border-white border-opacity-10"
+  >
+    <motion.h1 
+      className="mb-2 font-sans text-6xl font-bold tracking-tighter"
+      initial={{ opacity: 0, letterSpacing: '10px', y: -20 }}
+      animate={{ opacity: 1, letterSpacing: '-1px', y: 0 }}
+      transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+    >
+      MAP OF WONDERS
+    </motion.h1>
+    
+    <motion.div
+      initial={{ width: 0 }}
+      animate={{ width: '120px' }}
+      transition={{ duration: 1, delay: 1, ease: "easeInOut" }}
+      className="mx-auto mb-4 h-1 bg-white bg-opacity-60"
+    />
+    
+    <motion.p 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, delay: 1.2 }}
+      className="mb-8 text-xl font-light tracking-wide text-gray-200"
+    >
+      Discover the timeless beauty of India
+    </motion.p>
+    
+    <motion.div
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, delay: 1.5, ease: "easeOut" }}
+      className="flex justify-center space-x-4"
+    >
+      <motion.button
+        onClick={toggleLogin}
+        whileHover={{ scale: 1.05, backgroundColor: 'rgba(75, 85, 99, 0.9)' }}
+        whileTap={{ scale: 0.98 }}
+        className="group relative overflow-hidden rounded-md bg-gray-800 bg-opacity-50 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300"
+      >
+        <motion.span 
+          className="relative z-10"
+          whileHover={{ letterSpacing: '0.5px' }}
+          transition={{ duration: 0.3 }}
         >
-          <motion.h1 
-            className="mb-2 font-sans text-6xl font-bold tracking-tighter"
-            initial={{ opacity: 0, letterSpacing: '10px' }}
-            animate={{ opacity: 1, letterSpacing: '-1px' }}
-            transition={{ duration: 1.5, delay: 0.5 }}
-          >
-            MAP OF WONDERS
-          </motion.h1>
-          
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '120px' }}
-            transition={{ duration: 1, delay: 1 }}
-            className="mx-auto mb-4 h-1 bg-gray-400"
-          />
-          
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.2 }}
-            className="mb-8 text-xl font-light tracking-wide text-gray-300"
-          >
-            Discover the timeless beauty of India
-          </motion.p>
-          
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.5 }}
-            className="flex justify-center"
-          >
-            <button
-              onClick={toggleLogin}
-              className="group relative overflow-hidden rounded-md bg-gray-800 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300 hover:bg-gray-700"
-            >
-              <span className="relative z-10">Start Exploring</span>
-              <span className="absolute bottom-0 left-0 h-1 w-0 bg-gray-500 transition-all duration-300 group-hover:w-full"></span>
-            </button>
-          </motion.div>
-        </motion.div>
-      </div>
+          Login
+        </motion.span>
+        <motion.span 
+          className="absolute bottom-0 left-0 h-1 w-0 bg-white bg-opacity-30 transition-all duration-300 group-hover:w-full"
+          whileHover={{ width: '100%' }}
+        ></motion.span>
+      </motion.button>
+      
+      <motion.button
+        onClick={toggleSignup}
+        whileHover={{ scale: 1.05, backgroundColor: 'rgba(75, 85, 99, 0.9)' }}
+        whileTap={{ scale: 0.98 }}
+        className="group relative overflow-hidden rounded-md bg-gray-800 bg-opacity-50 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300"
+      >
+        <motion.span 
+          className="relative z-10"
+          whileHover={{ letterSpacing: '0.5px' }}
+          transition={{ duration: 0.3 }}
+        >
+          Sign Up
+        </motion.span>
+        <motion.span 
+          className="absolute bottom-0 left-0 h-1 w-0 bg-white bg-opacity-30 transition-all duration-300 group-hover:w-full"
+          whileHover={{ width: '100%' }}
+        ></motion.span>
+      </motion.button>
+    </motion.div>
+  </motion.div>
+</div>
 
       {/* Keep modals with highest z-index */}
       {/* Enhanced Login Modal with slide-in effect */}
@@ -532,7 +562,7 @@ export default function LandingPage() {
                 <label className="mb-2 block text-sm font-medium text-gray-300">Confirm Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                     </svg>
                   </div>
@@ -561,7 +591,7 @@ export default function LandingPage() {
                   <div className="w-full border-t border-gray-700"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-gray-900 px-2 text-gray-500">Or continue with</span>
+                  <span className="bg-gray-900 px-2 text-gray-500">Or sign up with</span>
                 </div>
               </div>
               
@@ -604,7 +634,7 @@ export default function LandingPage() {
                   setShowLogin(true);
                 }}
               >
-                Log in
+                Login
               </span>
             </div>
           </motion.div>
@@ -623,8 +653,8 @@ export default function LandingPage() {
       >
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={toggleForgotPassword} />
         <motion.div
-          initial={{ y: '100%', opacity: 0 }}
-          animate={{ y: showForgotPassword ? 0 : '100%', opacity: showForgotPassword ? 1 : 0 }}
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: showForgotPassword ? 0 : 50, opacity: showForgotPassword ? 1 : 0 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           className="relative w-full max-w-md overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 shadow-xl"
         >
@@ -640,28 +670,19 @@ export default function LandingPage() {
             <h2 className="mb-6 text-center text-2xl font-bold text-white">Reset Password</h2>
             
             {resetMessage ? (
-              <div className="rounded-lg bg-gray-800/80 p-6 text-center">
-                <div className="mb-4 flex justify-center">
-                  <div className="rounded-full bg-gray-700 p-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
+              <div className="mb-6 rounded-md bg-gray-800/80 p-4 text-center text-gray-300">
+                {resetMessage}
+                <div className="mt-6">
+                  <button 
+                    onClick={toggleForgotPassword}
+                    className="rounded-lg bg-gradient-to-r from-gray-700 to-gray-600 px-6 py-2 font-medium text-white transition duration-200 hover:from-gray-600 hover:to-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  >
+                    Back to Login
+                  </button>
                 </div>
-                <p className="text-gray-300">{resetMessage}</p>
-                <button
-                  onClick={toggleForgotPassword}
-                  className="mt-6 w-full rounded-lg bg-gray-700 py-2 text-white hover:bg-gray-600"
-                >
-                  Return to Login
-                </button>
               </div>
             ) : (
               <form onSubmit={handleForgotPassword}>
-                <p className="mb-6 text-sm text-gray-400">
-                  Enter the email address associated with your account and we'll send you a link to reset your password.
-                </p>
-                
                 <div className="mb-6">
                   <label className="mb-2 block text-sm font-medium text-gray-300">Email</label>
                   <div className="relative">
@@ -681,32 +702,52 @@ export default function LandingPage() {
                     />
                   </div>
                 </div>
-                
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  className="w-full rounded-lg bg-gradient-to-r from-gray-700 to-gray-600 py-2.5 font-medium text-white transition duration-200 hover:from-gray-600 hover:to-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900"
-                >
-                  Send Reset Link
-                </motion.button>
-                
-                <div className="mt-6 text-center text-sm text-gray-400">
-                  Remember your password?{" "}
-                  <span 
-                    className="cursor-pointer font-medium text-gray-300 hover:text-white"
+                <div className="flex space-x-4">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    className="flex-1 rounded-lg bg-gradient-to-r from-gray-700 to-gray-600 py-2.5 font-medium text-white transition duration-200 hover:from-gray-600 hover:to-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  >
+                    Send Reset Link
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="button"
                     onClick={() => {
                       setShowForgotPassword(false);
                       setShowLogin(true);
                     }}
+                    className="flex-1 rounded-lg border border-gray-700 bg-transparent py-2.5 font-medium text-gray-300 transition duration-200 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 focus:ring-offset-gray-900"
                   >
-                    Back to login
-                  </span>
+                    Back to Login
+                  </motion.button>
                 </div>
               </form>
             )}
           </motion.div>
         </motion.div>
+      </motion.div>
+
+      {/* Location Highlights - Optional Feature */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 2 }}
+        className="absolute bottom-8 left-0 right-0 z-10 flex justify-center"
+      >
+        <div className="flex space-x-2 overflow-x-auto px-6 pb-2">
+          {locations.map((location, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="flex-shrink-0 cursor-pointer rounded-lg bg-black bg-opacity-60 p-2 backdrop-blur-sm transition-all duration-300 hover:bg-opacity-80"
+            >
+              <p className="text-center text-sm font-medium text-white">{location}</p>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
     </div>
   );

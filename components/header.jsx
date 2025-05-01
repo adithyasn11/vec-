@@ -50,7 +50,7 @@ export default function Header() {
     <>
       <motion.header 
         className={`fixed top-0 z-30 w-full transition-all duration-300 ${
-          scrolled ? 'bg-gray-900/80 backdrop-blur-md py-3 shadow-lg' : 'bg-transparent py-5'
+          scrolled ? 'bg-gray-900/90 backdrop-blur-md py-3 shadow-lg' : 'bg-gray-900/60 backdrop-blur-sm py-5'
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
