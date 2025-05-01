@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import GridMotion from '../components/GridMotion.jsx';
 
@@ -11,6 +12,9 @@ export default function LandingPage() {
   const [showSignup, setShowSignup] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  
+  // Loading state
+  const [isLoading, setIsLoading] = useState(true);
   
   // Add form data state for login
   const [loginEmail, setLoginEmail] = useState('');
@@ -29,7 +33,15 @@ export default function LandingPage() {
   const [forgotEmail, setForgotEmail] = useState('');
   const [resetMessage, setResetMessage] = useState('');
  
- 
+  // Use effect to simulate loading
+  useEffect(() => {
+    // Simulate loading time (you can replace this with actual loading check)
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // 3 seconds loading time
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   // Valid user credentials (hardcoded for demonstration)
   const validCredentials = {
@@ -212,6 +224,65 @@ export default function LandingPage() {
 
   return (
     <div className="relative h-screen w-full overflow-hidden font-sans">
+      <AnimatePresence>
+        {isLoading ? (
+          // Simplified Loading Screen with Fancy Circle
+          <motion.div 
+            key="loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-900"
+          >
+            {/* Simple Fancy Circle Loader */}
+            <motion.div 
+              className="relative w-24 h-24"
+            >
+              {/* Outer spinning ring */}
+              <motion.div 
+                className="absolute inset-0 rounded-full border-4 border-gray-700"
+                initial={{ opacity: 0.5 }}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              ></motion.div>
+              
+              {/* Middle spinning ring */}
+              <motion.div 
+                className="absolute inset-2 rounded-full border-4 border-t-white border-l-white border-r-transparent border-b-transparent"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1.5, ease: "linear", repeat: Infinity }}
+              ></motion.div>
+              
+              {/* Inner spinning ring */}
+              <motion.div 
+                className="absolute inset-4 rounded-full border-4 border-r-white border-b-white border-l-transparent border-t-transparent"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 2, ease: "linear", repeat: Infinity }}
+              ></motion.div>
+              
+              {/* Center dot */}
+              <motion.div 
+                className="absolute inset-0 flex items-center justify-center"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <div className="w-3 h-3 rounded-full bg-white"></div>
+              </motion.div>
+            </motion.div>
+            
+            {/* Simple text below loader */}
+            <motion.p
+              className="mt-6 text-gray-400 text-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              Loading...
+            </motion.p>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
       {/* Add GridMotion with lower z-index */}
       <div className="relative z-0">
         <GridMotion items={items} />
@@ -219,83 +290,83 @@ export default function LandingPage() {
 
       {/* Main Content with higher z-index */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-white">
-  <motion.div
-    initial={{ y: -50, opacity: 0 }}
-    animate={{ y: 0, opacity: 1 }}
-    transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-    className="text-center relative z-20 bg-black bg-opacity-35 p-8 rounded-xl backdrop-blur-sm shadow-2xl border border-white border-opacity-10"
-  >
-    <motion.h1 
-      className="mb-2 font-sans text-6xl font-bold tracking-tighter"
-      initial={{ opacity: 0, letterSpacing: '10px', y: -20 }}
-      animate={{ opacity: 1, letterSpacing: '-1px', y: 0 }}
-      transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-    >
-      MAP OF WONDERS
-    </motion.h1>
-    
-    <motion.div
-      initial={{ width: 0 }}
-      animate={{ width: '120px' }}
-      transition={{ duration: 1, delay: 1, ease: "easeInOut" }}
-      className="mx-auto mb-4 h-1 bg-white bg-opacity-60"
-    />
-    
-    <motion.p 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: 1.2 }}
-      className="mb-8 text-xl font-light tracking-wide text-gray-200"
-    >
-      Discover the timeless beauty of India
-    </motion.p>
-    
-    <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, delay: 1.5, ease: "easeOut" }}
-      className="flex justify-center space-x-4"
-    >
-      <motion.button
-        onClick={toggleLogin}
-        whileHover={{ scale: 1.05, backgroundColor: 'rgba(75, 85, 99, 0.9)' }}
-        whileTap={{ scale: 0.98 }}
-        className="group relative overflow-hidden rounded-md bg-gray-800 bg-opacity-50 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300"
-      >
-        <motion.span 
-          className="relative z-10"
-          whileHover={{ letterSpacing: '0.5px' }}
-          transition={{ duration: 0.3 }}
+        <motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+          className="text-center relative z-20 bg-black bg-opacity-35 p-8 rounded-xl backdrop-blur-sm shadow-2xl border border-white border-opacity-10"
         >
-          Login
-        </motion.span>
-        <motion.span 
-          className="absolute bottom-0 left-0 h-1 w-0 bg-white bg-opacity-30 transition-all duration-300 group-hover:w-full"
-          whileHover={{ width: '100%' }}
-        ></motion.span>
-      </motion.button>
-      
-      <motion.button
-        onClick={toggleSignup}
-        whileHover={{ scale: 1.05, backgroundColor: 'rgba(75, 85, 99, 0.9)' }}
-        whileTap={{ scale: 0.98 }}
-        className="group relative overflow-hidden rounded-md bg-gray-800 bg-opacity-50 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300"
-      >
-        <motion.span 
-          className="relative z-10"
-          whileHover={{ letterSpacing: '0.5px' }}
-          transition={{ duration: 0.3 }}
-        >
-          Sign Up
-        </motion.span>
-        <motion.span 
-          className="absolute bottom-0 left-0 h-1 w-0 bg-white bg-opacity-30 transition-all duration-300 group-hover:w-full"
-          whileHover={{ width: '100%' }}
-        ></motion.span>
-      </motion.button>
-    </motion.div>
-  </motion.div>
-</div>
+          <motion.h1 
+            className="mb-2 font-sans text-6xl font-bold tracking-tighter"
+            initial={{ opacity: 0, letterSpacing: '10px', y: -20 }}
+            animate={{ opacity: 1, letterSpacing: '-1px', y: 0 }}
+            transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+          >
+            MAP OF WONDERS
+          </motion.h1>
+          
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '120px' }}
+            transition={{ duration: 1, delay: 1, ease: "easeInOut" }}
+            className="mx-auto mb-4 h-1 bg-white bg-opacity-60"
+          />
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.2 }}
+            className="mb-8 text-xl font-light tracking-wide text-gray-200"
+          >
+            Discover the timeless beauty of India
+          </motion.p>
+          
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.5, ease: "easeOut" }}
+            className="flex justify-center space-x-4"
+          >
+            <motion.button
+              onClick={toggleLogin}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(75, 85, 99, 0.9)' }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative overflow-hidden rounded-md bg-gray-800 bg-opacity-50 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300"
+            >
+              <motion.span 
+                className="relative z-10"
+                whileHover={{ letterSpacing: '0.5px' }}
+                transition={{ duration: 0.3 }}
+              >
+                Login
+              </motion.span>
+              <motion.span 
+                className="absolute bottom-0 left-0 h-1 w-0 bg-white bg-opacity-30 transition-all duration-300 group-hover:w-full"
+                whileHover={{ width: '100%' }}
+              ></motion.span>
+            </motion.button>
+            
+            <motion.button
+              onClick={toggleSignup}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(75, 85, 99, 0.9)' }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative overflow-hidden rounded-md bg-gray-800 bg-opacity-50 px-8 py-3 font-medium text-white shadow-lg transition-all duration-300"
+            >
+              <motion.span 
+                className="relative z-10"
+                whileHover={{ letterSpacing: '0.5px' }}
+                transition={{ duration: 0.3 }}
+              >
+                Sign Up
+              </motion.span>
+              <motion.span 
+                className="absolute bottom-0 left-0 h-1 w-0 bg-white bg-opacity-30 transition-all duration-300 group-hover:w-full"
+                whileHover={{ width: '100%' }}
+              ></motion.span>
+            </motion.button>
+          </motion.div>
+        </motion.div>
+      </div>
 
       {/* Keep modals with highest z-index */}
       {/* Enhanced Login Modal with slide-in effect */}
