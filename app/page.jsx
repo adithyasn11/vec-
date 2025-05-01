@@ -29,13 +29,7 @@ export default function LandingPage() {
   const [forgotEmail, setForgotEmail] = useState('');
   const [resetMessage, setResetMessage] = useState('');
  
-  const locations = [
-    'Taj Mahal',
-    'Varanasi',
-    'Jaipur',
-    'Kerala',
-    'Himalaya'
-  ];
+ 
   
   // Valid user credentials (hardcoded for demonstration)
   const validCredentials = {
@@ -730,25 +724,7 @@ export default function LandingPage() {
         </motion.div>
       </motion.div>
 
-      {/* Location Highlights - Optional Feature */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 2 }}
-        className="absolute bottom-8 left-0 right-0 z-10 flex justify-center"
-      >
-        <div className="flex space-x-2 overflow-x-auto px-6 pb-2">
-          {locations.map((location, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="flex-shrink-0 cursor-pointer rounded-lg bg-black bg-opacity-60 p-2 backdrop-blur-sm transition-all duration-300 hover:bg-opacity-80"
-            >
-              <p className="text-center text-sm font-medium text-white">{location}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+      
     </div>
   );
 }
