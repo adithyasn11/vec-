@@ -1,8 +1,9 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     unoptimized: false,
-  }
-}
+  },
+};
 
-module.exports = nextConfig
+export default nextConfig;
