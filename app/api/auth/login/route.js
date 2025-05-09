@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { cookies } from 'next/headers';
 
 // Create a single prisma instance to be reused across requests
 const prisma = new PrismaClient();
@@ -117,7 +118,7 @@ export async function POST(request) {
       loginAttempts[clientIp].count = 0;
     }
     
-    // Create response with security headers
+    // Create response with token and set cookie
     const response = NextResponse.json({
       success: true,
       token,
@@ -126,8 +127,29 @@ export async function POST(request) {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email
-        // Note: Removed 'role' field as it's not in the schema
       }
+    });
+    
+    // Set the JWT token as an HTTP-only cookie
+    response.cookies.set({
+      name: 'auth-token',
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60, // 30 days or 24 hours in seconds
+      path: '/',
+    });
+    
+    // Also set a non-HTTP-only cookie for client-side access if needed
+    response.cookies.set({
+      name: 'auth-status',
+      value: 'authenticated',
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60,
+      path: '/',
     });
     
     // Add security headers
